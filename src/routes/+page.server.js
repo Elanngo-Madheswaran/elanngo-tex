@@ -19,6 +19,18 @@ export async function load({ params }) {
         { id: 'jacket', name: 'Jacket', images: ['https://via.placeholder.com/150?text=Jacket1', 'https://via.placeholder.com/150?text=Jacket2', 'https://via.placeholder.com/150?text=Jacket3', 'https://via.placeholder.com/150?text=Jacket4', 'https://via.placeholder.com/150?text=Jacket5', 'https://via.placeholder.com/150?text=Jacket6', 'https://via.placeholder.com/150?text=Jacket7', 'https://via.placeholder.com/150?text=Jacket8', 'https://via.placeholder.com/150?text=Jacket9', 'https://via.placeholder.com/150?text=Jacket10'] }
     ];
 
+    // Preload images
+    await Promise.all(
+        technologies.flatMap(tech => tech.images.map(src => {
+            return new Promise((resolve, reject) => {
+                const img = new Image();
+                img.src = src;
+                img.onload = resolve;
+                img.onerror = reject;
+            });
+        }))
+    );
+
     return {
         props: technologies
     };
