@@ -87,7 +87,7 @@
                 </button>
             {/if}
         
-            <VirtualList items={getSelectedTechnologies()} class="w-full">
+            <!-- <VirtualList items={getSelectedTechnologies()} class="w-full">
                 {#snippet vl_slot({ item: tech }: VLSlotSignature<(typeof technologies)[0]>)}
                 <div class="m-2">
                     <h3 class="text-center text-5xl text-slate-800 font-medium">{tech.name}</h3>
@@ -102,8 +102,20 @@
                     </div>
                 </div>
                 {/snippet}
-            </VirtualList>
+            </VirtualList> -->
             
+            {#each getSelectedTechnologies() as tech}
+                <div class="m-2 flex flex-col items-center justify-center w-full">
+                    <h3 class="text-center text-5xl text-slate-800 font-medium">{tech.name}</h3>
+                    <div class="flex flex-wrap justify-center max-h-96 overflow-y-scroll mt-5 w-5/6 items-center">
+                        {#each tech.images as image}
+                            <button type="button" class="m-5 cursor-pointer" onclick={() => showOverlay(image)} onkeydown={(event) => event.key === 'Enter' && showOverlay(image)}>
+                                <img src={image} alt={tech.name} class="w-40" />
+                            </button>
+                        {/each}
+                    </div>
+                </div>
+    {/each}
             
         </div>
     </div>
