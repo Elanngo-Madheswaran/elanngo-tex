@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { VirtualList, type VLSlotSignature } from 'svelte-virtuallists';
+    import { VirtualList, type VLSlotSignature, SCROLL_BEHAVIOR } from 'svelte-virtuallists';
 
     let { data } = $props();
     let technologies = data.props;
@@ -31,8 +31,7 @@
         }
         return technologies.filter(tech => selectedTechnologies.includes(tech.id));
     }
-
-    let scrollToBehaviour = "instant";
+    let scrollToBehaviour: SCROLL_BEHAVIOR = $state(SCROLL_BEHAVIOR.INSTANT);
     import { onMount } from 'svelte';
 
     let overlayVisible = $state(false);
