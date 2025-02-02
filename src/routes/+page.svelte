@@ -32,6 +32,7 @@
         return technologies.filter(tech => selectedTechnologies.includes(tech.id));
     }
 
+    let scrollToBehaviour = "instant";
     import { onMount } from 'svelte';
 
     let overlayVisible = $state(false);
@@ -92,7 +93,7 @@
                 <div class="m-2">
                     <h3 class="text-center text-5xl text-slate-800 font-medium">{tech.name}</h3>
                     <div class="flex flex-wrap justify-center items-center">
-                        <VirtualList items={tech.images} class="lg:max-w-screen-lg w-5/6" isHorizontal={true}>
+                        <VirtualList items={tech.images} class="lg:max-w-screen-lg" {scrollToBehaviour} isHorizontal={true}>
                             {#snippet vl_slot({ item: image }: VLSlotSignature<string>)}
                             <button type="button" class="m-5 cursor-pointer" onclick={() => showOverlay(image)} onkeydown={(event) => event.key === 'Enter' && showOverlay(image)}>
                                 <img src={image} alt={tech.name} class="max-w-40"/>
