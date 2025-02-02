@@ -1,6 +1,7 @@
-<script>
-    
-    let {data} = $props();
+<script lang="ts">
+    import { VirtualList, type VLSlotSignature } from 'svelte-virtuallists';
+
+    let { data } = $props();
     let technologies = data.props;
 
     let selectedTechnologies = $state([]);
@@ -8,7 +9,6 @@
     function onclear() {
         selectedTechnologies = [];
     }
-
 
     function onclick(event) {
         const { target } = event;
@@ -31,28 +31,29 @@
         }
         return technologies.filter(tech => selectedTechnologies.includes(tech.id));
     }
+
     import { onMount } from 'svelte';
 
-        let overlayVisible = $state(false);
-        let overlayImage = $state('');
+    let overlayVisible = $state(false);
+    let overlayImage = $state('');
 
-        function showOverlay(image) {
-            overlayImage = image;
-            overlayVisible = true;
-        }
+    function showOverlay(image) {
+        overlayImage = image;
+        overlayVisible = true;
+    }
 
-        function hideOverlay() {
-            overlayVisible = false;
-            overlayImage = '';
-        }
+    function hideOverlay() {
+        overlayVisible = false;
+        overlayImage = '';
+    }
 
-        onMount(() => {
-            document.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape') {
-                    hideOverlay();
-                }
-            });
+    onMount(() => {
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                hideOverlay();
+            }
         });
+    });
 </script>
 
 <hero class="flex flex-col items-center justify-center md:h-screen w-full">
@@ -62,12 +63,12 @@
     <a href="https://maps.app.goo.gl/JCSeurhNWWVXzti8A" target="_blank" class="sm:text-2xl text-lg font-semibold text-center text-gray-600 dark:text-gray-300 my-5"><i class="ph-fill ph-map-pin-line mx-5"></i>Behind Eashwaran Kovil , Erode - 638001</a>
 </hero>
 <section class="w-full flex justify-center">
-    <div class="xl:w-3/4">
+    <div class="xl:w-3/4 xl:max-w-screen-xl w-full">
         <h3 class="m-5 text-4xl font-medium text-gray-900 dark:text-white">Choose Products:</h3>
         <ul class="flex flex-wrap justify-center gap-6 items-center">
             {#each technologies as tech}
                 <li class="mx-2">
-                    <input type="checkbox" id={tech.id} onclick={onclick} checked={ischeked(tech.id)} class="hidden peer" required="">
+                    <input type="checkbox" id={tech.id} onclick={onclick} checked={ischeked(tech.id)} class="hidden peer" required/>
                     <label for={tech.id} class="inline-flex items-center justify-between w-full p-5 text-gray-500 bg-white border-2 border-gray-200 rounded-lg cursor-pointer dark:hover:text-gray-300 dark:border-gray-700 peer-checked:border-green-600 peer-checked:bg-green-500 peer-checked:text-white hover:text-gray-600 dark:peer-checked:text-gray-300 peer-checked:text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:bg-gray-800 dark:hover:bg-gray-700">                           
                         <div class="block">
                              <div class="w-full text-lg font-semibold">{tech.name}</div>
@@ -82,26 +83,31 @@
             
             {#if overlayVisible}
                 <button type="button" class="overlay" onclick={hideOverlay} onkeydown={(event) => event.key === 'Enter' && hideOverlay()} aria-label="Close overlay">
-                    <img src={overlayImage} alt="" class="scale-150"/>
+                    <img src={overlayImage} alt="" class="w-fit"/>
                 </button>
             {/if}
         
-            {#each getSelectedTechnologies() as tech}
+            <VirtualList items={getSelectedTechnologies()} class="w-full">
+                {#snippet vl_slot({ item: tech }: VLSlotSignature<(typeof technologies)[0]>)}
                 <div class="m-2">
                     <h3 class="text-center text-5xl text-slate-800 font-medium">{tech.name}</h3>
                     <div class="flex flex-wrap justify-center items-center">
-                        {#each tech.images as image}
+                        <VirtualList items={tech.images} class="lg:max-w-screen-lg w-5/6" isHorizontal={true}>
+                            {#snippet vl_slot({ item: image }: VLSlotSignature<string>)}
                             <button type="button" class="m-5 cursor-pointer" onclick={() => showOverlay(image)} onkeydown={(event) => event.key === 'Enter' && showOverlay(image)}>
-                                <img src={image} alt={tech.name} />
+                                <img src={image} alt={tech.name} class="max-w-40"/>
                             </button>
-                        {/each}
+                            {/snippet}
+                        </VirtualList>
                     </div>
                 </div>
-            {/each}
+                {/snippet}
+            </VirtualList>
+            
+            
         </div>
     </div>
 </section>
-
 
 <style>
     .overlay {
@@ -121,4 +127,6 @@
         max-width: 90%;
         max-height: 90%;
     }
+
+    
 </style>
